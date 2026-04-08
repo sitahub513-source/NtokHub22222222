@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="bn" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NatokHub - Bengali Serial Portal</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&amp;family=Playfair+Display:wght@700;900&amp;display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: { 
+            gold: '#D4A843',
+            goldLight: '#F0D078',
+            darkBg: '#0A0A0A',
+            darkRed: '#2A0A0A',
+            cardBg: '#1A1018',
+            surfaceBg: '#140C10'
+          },
+          fontFamily: {
+            bengali: ['Hind Siliguri', 'sans-serif'],
+            display: ['Playfair Display', 'serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    html, body { height: 100%; margin: 0; }
+    * { scrollbar-width: thin; scrollbar-color: #D4A843 #1A1018; }
+    .glow-gold { box-shadow: 0 0 20px rgba(212, 168, 67, 0.35), 0 0 60px rgba(212, 168, 67, 0.1); }
+    .glow-gold-sm { box-shadow: 0 0 12px rgba(212, 168, 67, 0.25); }
+    .card-hover { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .card-hover:hover { transform: translateY(-6px); box-shadow: 0 12px 40px rgba(212, 168, 67, 0.15); }
+    .fade-up { opacity: 0; transform: translateY(30px); animation: fadeUp 0.7s ease forwards; }
+    @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+    @keyframes pulse-badge { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+    .pulse-badge { animation: pulse-badge 2s ease-in-out infinite; }
+    @keyframes slideInRight { from { transform: translateX(120%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+    @keyframes slideOutRight { from { transform: translateX(0); opacity: 1; } to { transform: translateX(120%); opacity: 0; } }
+    .notif-in { animation: slideInRight 0.5s ease forwards; }
+    .notif-out { animation: slideOutRight 0.5s ease forwards; }
+    @keyframes spin-wheel { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .spinning { animation: spin-wheel 3s cubic-bezier(0.17, 0.67, 0.12, 0.99) forwards; }
+    .gradient-text { background: linear-gradient(135deg, #D4A843, #F0D078, #D4A843); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .bg-main-gradient { background: linear-gradient(165deg, #0A0A0A 0%, #1A0808 25%, #2A0A0A 50%, #1A0808 75%, #0A0A0A 100%); }
+    .stagger-1 { animation-delay: 0.1s; }
+    .stagger-2 { animation-delay: 0.2s; }
+    .stagger-3 { animation-delay: 0.3s; }
+    .stagger-4 { animation-delay: 0.4s; }
+    .stagger-5 { animation-delay: 0.5s; }
+    .stagger-6 { animation-delay: 0.6s; }
+    @keyframes popIn { 0% { transform: scale(0.3) rotate(-10deg); opacity: 0; } 50% { transform: scale(1.1) rotate(2deg); } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full bg-darkBg font-bengali text-gray-200">
+  <div id="app-wrapper" class="h-full w-full overflow-auto bg-main-gradient">
+   <!-- Sticky Header -->
+   <header id="main-header" class="sticky top-0 z-50 backdrop-blur-xl bg-black/70 border-b border-gold/10">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+     <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-gold to-goldLight flex items-center justify-center">
+       <span class="text-black font-bold text-lg">N</span>
+      </div>
+      <div>
+       <h1 id="logo-text" class="font-display text-xl font-black gradient-text leading-tight">NatokHub</h1>
+       <p id="tagline-text" class="text-[10px] uppercase tracking-[0.2em] text-gold/60">Bengali Serial Portal</p>
+      </div>
+     </div>
+     <div class="flex items-center gap-3">
+      <button onclick="toggleSearch()" class="w-9 h-9 rounded-full bg-white/5 hover:bg-gold/20 flex items-center justify-center transition-colors"> <i data-lucide="search" class="w-4 h-4 text-gold/80"></i> </button> <button class="w-9 h-9 rounded-full bg-white/5 hover:bg-gold/20 flex items-center justify-center transition-colors relative"> <i data-lucide="bell" class="w-4 h-4 text-gold/80"></i> <span class="absolute -top-0.5 -right-0.5 w-3 h-3 bg-red-500 rounded-full border-2 border-black"></span> </button>
+     </div>
+    </div><!-- Search Bar -->
+    <div id="search-bar" class="max-w-7xl mx-auto px-4 overflow-hidden transition-all duration-300" style="max-height:0;opacity:0;">
+     <div class="pb-3">
+      <input type="text" placeholder="সিরিয়াল খুঁজুন..." class="w-full bg-white/5 border border-gold/20 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-gold/50 focus:ring-1 focus:ring-gold/30">
+     </div>
+    </div>
+   </header>
+   <main>
+    <!-- Hero Section -->
+    <section class="relative px-4 pt-16 pb-20 overflow-hidden">
+     <div class="absolute inset-0 opacity-20">
+      <div class="absolute top-10 left-1/4 w-72 h-72 bg-red-900/40 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-10 right-1/4 w-96 h-96 bg-gold/10 rounded-full blur-3xl"></div>
+     </div>
+     <div class="relative max-w-4xl mx-auto text-center">
+      <div class="inline-block mb-6 fade-up">
+       <span class="pulse-badge inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gold/10 border border-gold/20 text-gold text-xs font-semibold"> <span class="w-2 h-2 rounded-full bg-green-400 inline-block"></span> প্রতিদিন আপডেট হচ্ছে </span>
+      </div>
+      <h2 id="hero-headline" class="fade-up stagger-1 text-3xl sm:text-4xl md:text-5xl font-bold leading-tight mb-5 gradient-text font-display">বাংলা সিরিয়ালের সেরা আপডেট এক জায়গায়</h2>
+      <p id="hero-subtext" class="fade-up stagger-2 text-gray-400 text-base sm:text-lg max-w-2xl mx-auto mb-10 leading-relaxed">প্রতিদিন নতুন পর্ব, কাস্ট, গল্প এবং সর্বশেষ আপডেট</p>
+      <div class="fade-up stagger-3 flex flex-col sm:flex-row items-center justify-center gap-4">
+       <a href="https://spanjaguarjingle.com/fp9i1g24?key=cdfe3aa5b0e62b7f0c794c105ddcea04" target="_blank" rel="noopener noreferrer" class="glow-gold px-8 py-3.5 rounded-xl bg-gradient-to-r from-gold to-goldLight text-black font-bold text-sm hover:scale-105 transition-transform inline-block"> আজকের আপডেট দেখুন </a> <a href="https://spanjaguarjingle.com/fp9i1g24?key=cdfe3aa5b0e62b7f0c794c105ddcea04" target="_blank" rel="noopener noreferrer" class="px-8 py-3.5 rounded-xl border border-gold/40 text-gold font-semibold text-sm hover:bg-gold/10 transition-colors inline-block"> সব সিরিয়াল দেখুন </a>
+      </div>
+      <p class="text-xs text-gray-500 mt-6 text-center leading-relaxed">⚠️ কোথাও ক্লিক করলে একটি নতুন পেজ খুলবে, যেখানে Sign Up করলে পুরো নাটক দেখতে পারবেন। বি.দ্র.: এগুলো কোনো ফিশিং বা স্প্যাম লিংক নয়।</p>
+     </div>
+    </section><!-- Serial Cards Grid -->
+    <section id="serials" class="px-4 pb-16">
+     <div class="max-w-7xl mx-auto">
+      <div class="flex items-center gap-3 mb-8 fade-up">
+       <div class="w-1 h-8 bg-gradient-to-b from-gold to-transparent rounded-full"></div>
+       <h3 class="text-2xl font-bold text-white">🔥 জনপ্রিয় সিরিয়াল</h3>
+      </div>
+      <div id="serial-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+      </div>
+     </div>
+    </section><!-- Post Page Section -->
+    <section id="post-page" class="px-4 pb-16 hidden">
+     <div class="max-w-3xl mx-auto">
+      <button onclick="closePost()" class="flex items-center gap-2 text-gold/80 hover:text-gold mb-6 text-sm transition-colors"> <i data-lucide="arrow-left" class="w-4 h-4"></i> ফিরে যান </button>
+      <div class="bg-cardBg border border-gold/10 rounded-2xl overflow-hidden">
+       <div id="post-thumb" class="w-full h-48 sm:h-64 bg-gradient-to-br from-darkRed to-cardBg flex items-center justify-center">
+        <span class="text-6xl" id="post-emoji">🎭</span>
+       </div>
+       <div class="p-6 sm:p-8">
+        <h2 id="post-title" class="text-2xl sm:text-3xl font-bold gradient-text mb-4"></h2>
+        <div class="flex items-center gap-4 mb-6 text-xs text-gray-500">
+         <span class="flex items-center gap-1"><i data-lucide="calendar" class="w-3 h-3"></i> আজ</span> <span class="flex items-center gap-1"><i data-lucide="clock" class="w-3 h-3"></i> ৫ মিনিট</span>
+        </div>
+        <div id="post-summary" class="text-gray-300 leading-relaxed mb-8 text-sm sm:text-base"></div><!-- Next Episode Teaser -->
+        <div class="bg-white/5 border border-gold/10 rounded-xl p-5 mb-8">
+         <h4 class="text-gold font-semibold mb-2 flex items-center gap-2"><i data-lucide="fast-forward" class="w-4 h-4"></i> পরবর্তী পর্বের ঝলক</h4>
+         <p id="post-next" class="text-gray-400 text-sm leading-relaxed"></p>
+        </div><!-- Cast Info -->
+        <div>
+         <h4 class="text-gold font-semibold mb-4 flex items-center gap-2"><i data-lucide="users" class="w-4 h-4"></i> প্রধান কাস্ট</h4>
+         <div id="post-cast" class="flex flex-wrap gap-3"></div>
+        </div>
+       </div>
+      </div>
+     </div>
+    </section><!-- CTA Section -->
+    <section class="px-4 pb-16">
+     <div class="max-w-3xl mx-auto text-center bg-gradient-to-br from-cardBg to-darkRed/30 border border-gold/10 rounded-2xl p-8 sm:p-12 fade-up">
+      <h3 class="text-2xl sm:text-3xl font-bold gradient-text mb-3">আপনার পছন্দের সিরিয়াল মিস করবেন না</h3>
+      <p class="text-gray-400 mb-8 text-sm">প্রতিদিনের আপডেট পেতে আমাদের সাথে থাকুন</p>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+       <a href="https://spanjaguarjingle.com/fp9i1g24?key=cdfe3aa5b0e62b7f0c794c105ddcea04" target="_blank" rel="noopener noreferrer" class="glow-gold px-8 py-3.5 rounded-xl bg-gradient-to-r from-gold to-goldLight text-black font-bold text-sm hover:scale-105 transition-transform flex items-center gap-2 inline-block"> ▶️ আজকের পর্ব দেখুন </a> <a href="https://spanjaguarjingle.com/fp9i1g24?key=cdfe3aa5b0e62b7f0c794c105ddcea04" target="_blank" rel="noopener noreferrer" class="px-8 py-3.5 rounded-xl border border-gold/40 text-gold font-semibold text-sm hover:bg-gold/10 transition-colors flex items-center gap-2 inline-block"> 📥 ডাউনলোড করুন </a>
+      </div>
+      <p class="text-xs text-gray-500 mt-6 text-center leading-relaxed">⚠️ কোথাও ক্লিক করলে একটি নতুন পেজ খুলবে, যেখানে Sign Up করলে পুরো নাটক দেখতে পারবেন। বি.দ্র.: এগুলো কোনো ফিশিং বা স্প্যাম লিংক নয়।</p><!-- Spin & Win -->
+      <section class="px-4 pb-16">
+       <div class="max-w-lg mx-auto text-center bg-cardBg border border-gold/15 rounded-2xl p-8 fade-up">
+        <h3 class="text-xl font-bold gradient-text mb-2">🎰 স্পিন করুন ও জিতুন!</h3>
+        <p class="text-gray-500 text-sm mb-6">ভাগ্যচক্র ঘুরিয়ে উপহার জিতে নিন</p>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+         <div class="bg-gradient-to-br from-gold/20 to-gold/5 border border-gold/20 rounded-lg p-3 text-center">
+          <div class="text-2xl mb-1">
+           💳
+          </div>
+          <p class="text-xs text-gray-300 font-semibold">৳300 রিচার্জ</p>
+         </div>
+         <div class="bg-gradient-to-br from-gold/20 to-gold/5 border border-gold/20 rounded-lg p-3 text-center">
+          <div class="text-2xl mb-1">
+           💰
+          </div>
+          <p class="text-xs text-gray-300 font-semibold">৳500 bKash</p>
+         </div>
+         <div class="bg-gradient-to-br from-gold/20 to-gold/5 border border-gold/20 rounded-lg p-3 text-center">
+          <div class="text-2xl mb-1">
+           🇮🇳
+          </div>
+          <p class="text-xs text-gray-300 font-semibold">₹200 Paytm</p>
+         </div>
+         <div class="bg-gradient-to-br from-gold/20 to-gold/5 border border-gold/20 rounded-lg p-3 text-center">
+          <div class="text-2xl mb-1">
+           📱
+          </div>
+          <p class="text-xs text-gray-300 font-semibold">1GB নেট</p>
+         </div>
+         <div class="bg-gradient-to-br from-gold/20 to-gold/5 border border-gold/20 rounded-lg p-3 text-center">
+          <div class="text-2xl mb-1">
+           ⭐
+          </div>
+          <p class="text-xs text-gray-300 font-semibold">৳100 বোনাস</p>
+         </div>
+         <div class="bg-gradient-to-br from-gold/20 to-gold/5 border border-gold/20 rounded-lg p-3 text-center">
+          <div class="text-2xl mb-1">
+           🎁
+          </div>
+          <p class="text-xs text-gray-300 font-semibold">আবার চেষ্টা করুন</p>
+         </div>
+         <div class="bg-gradient-to-br from-red-600/30 to-red-900/10 border border-red-500/40 rounded-lg p-3 text-center">
+          <div class="text-2xl mb-1">
+           🏆
+          </div>
+          <p class="text-xs text-red-300 font-bold">৳1000 মেগা!</p>
+         </div>
+         <div class="bg-gradient-to-br from-gold/20 to-gold/5 border border-gold/20 rounded-lg p-3 text-center">
+          <div class="text-2xl mb-1">
+           💵
+          </div>
+          <p class="text-xs text-gray-300 font-semibold">₹50 ক্যাশ</p>
+         </div>
+        </div>
+        <div class="relative w-48 h-48 mx-auto mb-6">
+         <svg id="spin-wheel" viewbox="0 0 200 200" class="w-full h-full">
+          <circle cx="100" cy="100" r="95" fill="none" stroke="rgba(212,168,67,0.2)" stroke-width="2" /> <path d="M100,5 A95,95 0 0,1 182.3,52.5 L100,100 Z" fill="#D4A843" opacity="0.8" /> <path d="M182.3,52.5 A95,95 0 0,1 182.3,147.5 L100,100 Z" fill="#8B3A3A" opacity="0.8" /> <path d="M182.3,147.5 A95,95 0 0,1 100,195 L100,100 Z" fill="#D4A843" opacity="0.6" /> <path d="M100,195 A95,95 0 0,1 17.7,147.5 L100,100 Z" fill="#8B3A3A" opacity="0.6" /> <path d="M17.7,147.5 A95,95 0 0,1 17.7,52.5 L100,100 Z" fill="#D4A843" opacity="0.4" /> <path d="M17.7,52.5 A95,95 0 0,1 100,5 L100,100 Z" fill="#8B3A3A" opacity="0.4" /> <circle cx="100" cy="100" r="20" fill="#0A0A0A" stroke="#D4A843" stroke-width="2" /> <text x="100" y="105" text-anchor="middle" fill="#D4A843" font-size="14" font-weight="bold">
+           🎯
+          </text>
+         </svg>
+         <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1 text-gold text-2xl">
+          ▼
+         </div>
+        </div>
+        <div class="bg-gradient-to-r from-gold/20 to-goldLight/10 border border-gold/30 rounded-xl p-4 mb-4">
+         <p class="text-goldLight font-bold text-sm mb-1">🎯 বিশেষ অফার: প্রথম স্পিনে ৳100 বোনাস!</p>
+         <p class="text-xs text-gold/80">প্রতিবার জেতার সুযোগ! ৳50-৳600 পর্যন্ত জয়ী হন 🎁</p>
+        </div><button onclick="spinWheel()" id="spin-btn" class="glow-gold-sm px-8 py-3 rounded-xl bg-gradient-to-r from-gold to-goldLight text-black font-bold text-sm hover:scale-105 transition-transform"> স্পিন করুন </button>
+        <p id="spin-result" class="mt-4 text-gold font-semibold text-sm hidden"></p>
+       </div>
+      </section><!-- Earn Money Banner -->
+      <section class="px-4 pb-16">
+       <div class="max-w-3xl mx-auto bg-gradient-to-r from-gold/10 via-gold/5 to-gold/10 border border-gold/20 rounded-2xl p-6 sm:p-8 flex flex-col sm:flex-row items-center gap-6 fade-up">
+        <div class="text-5xl">
+         💰
+        </div>
+        <div class="text-center sm:text-left flex-1">
+         <h3 class="text-lg font-bold text-gold mb-1">অনলাইনে আয় করুন!</h3>
+         <p class="text-gray-400 text-sm">ঘরে বসে মোবাইল দিয়ে সহজে আয় করুন প্রতিদিন। বিশ্বস্ত প্ল্যাটফর্ম।</p>
+        </div><button class="shrink-0 px-6 py-2.5 rounded-xl bg-gold/20 border border-gold/30 text-gold font-semibold text-sm hover:bg-gold/30 transition-colors"> বিস্তারিত জানুন </button>
+       </div>
+      </section><!-- Footer -->
+      <footer class="border-t border-gold/10 bg-black/40">
+       <div class="max-w-7xl mx-auto px-4 py-8">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+         <div class="flex items-center gap-6 text-sm text-gray-500">
+          <a href="#" class="hover:text-gold transition-colors">আমাদের সম্পর্কে</a> <a href="#" class="hover:text-gold transition-colors">যোগাযোগ</a> <a href="#" class="hover:text-gold transition-colors">গোপনীয়তা নীতি</a>
+         </div>
+         <p id="copyright-text" class="text-xs text-gray-600">© 2025 NatokHub. সর্বস্বত্ব সংরক্ষিত।</p>
+        </div>
+       </div>
+      </footer><!-- Live Notification Popup -->
+      <div id="live-notif" class="fixed bottom-4 right-4 z-50 hidden">
+       <div class="bg-cardBg border border-gold/20 rounded-xl px-4 py-3 shadow-2xl flex items-center gap-3 max-w-xs">
+        <div class="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center shrink-0">
+         <i data-lucide="check-circle" class="w-4 h-4 text-green-400"></i>
+        </div>
+        <p id="notif-text" class="text-xs text-gray-300 leading-snug"></p>
+       </div>
+      </div>
+     </div>
+     <script>
+    // Serial Data
+    const serials = [
+      { id: 1, emoji: '🌹', title: 'অনুরাগের ছোঁয়া', desc: 'প্রেম ও পরিবারের গল্প, নতুন মোড় আসছে।', cast: ['রাজ', 'প্রিয়া', 'সুমন'], next: 'অনুরাগ কি প্রিয়াকে ক্ষমা করবে? পরবর্তী পর্বে বড় চমক!', summary: 'আজকের পর্বে অনুরাগ জানতে পারে প্রিয়ার গোপন কথা। পরিবারে তোলপাড় শুরু হয়। সুমন মধ্যস্থতা করতে এলেও পরিস্থিতি আরো জটিল হয়ে ওঠে।' },
+      { id: 2, emoji: '⚔️', title: 'মিঠাই', desc: 'মিঠাই ও সিদ্ধান্তের নতুন পর্ব।', cast: ['মিঠাই', 'রবি', 'কাকিমা'], next: 'মিঠাই কি সত্য প্রকাশ করবে? চাঞ্চল্যকর মুহূর্ত!', summary: 'মিঠাই আজ রবির সামনে সব সত্য বলার সিদ্ধান্ত নেয়। কিন্তু কাকিমার চক্রান্তে সব পরিকল্পনা ভেস্তে যায়।' },
+      { id: 3, emoji: '👑', title: 'ইচ্ছাপূরণ', desc: 'ইচ্ছার লড়াই, ভালোবাসার টানাপোড়েন।', cast: ['ইচ্ছা', 'সৌরভ', 'দিদিমা'], next: 'ইচ্ছা কি তার স্বপ্ন পূরণ করতে পারবে?', summary: 'ইচ্ছা আজ একটি কঠিন সিদ্ধান্তের মুখোমুখি। সৌরভ তাকে সাহায্য করতে চাইলেও দিদিমার বিরোধিতায় সব কিছু থমকে যায়।' },
+      { id: 4, emoji: '🏠', title: 'কৃষ্ণকলি', desc: 'কৃষ্ণকলির জীবনে নতুন চ্যালেঞ্জ।', cast: ['কৃষ্ণকলি', 'নীলাঞ্জনা', 'শ্যাম'], next: 'কৃষ্ণকলি কি পরিবারকে বাঁচাতে পারবে?', summary: 'কৃষ্ণকলি আজ জানতে পারে পরিবারের আর্থিক সংকটের কথা। নীলাঞ্জনা সাহায্যের হাত বাড়ালেও শ্যামের সন্দেহ বাড়তে থাকে।' },
+      { id: 5, emoji: '💫', title: 'মোহর', desc: 'ভাগ্য বদলে দেওয়ার গল্প।', cast: ['মোহর', 'অনিকেত', 'শাশুড়ি'], next: 'মোহরের জীবনে কি আসছে বড় পরিবর্তন?', summary: 'মোহর আজ একটি অপ্রত্যাশিত চিঠি পায় যা তার জীবন পাল্টে দিতে পারে। অনিকেত চিন্তিত হয়ে পড়ে।' },
+      { id: 6, emoji: '🌸', title: 'ফুলকি', desc: 'ফুলকি আর তার রঙিন দুনিয়া।', cast: ['ফুলকি', 'দেব', 'মাসি'], next: 'ফুলকির পরীক্ষার ফলাফল কি আসবে?', summary: 'আজ ফুলকি তার শিল্পকলার প্রতিযোগিতায় অংশ নেয়। দেব পেছন থেকে সাহায্য করলেও মাসির কড়া নজরদারি চলতে থাকে।' }
+    ];
+
+    const notifications = [
+      'ঢাকা থেকে রহিম ৳500 উপার্জন করেছেন!',
+      'চট্টগ্রাম থেকে করিম ৳350 জিতেছেন!',
+      'রাজশাহী থেকে ফাতিমা ৳200 পেয়েছেন!',
+      'খুলনা থেকে সালমা ৳450 উপার্জন করেছেন!',
+      'সিলেট থেকে জাহিদ ৳600 জিতেছেন!'
+    ];
+
+    const defaultConfig = {
+      logo_text: 'NatokHub',
+      tagline: 'Bengali Serial Portal',
+      hero_headline: 'বাংলা সিরিয়ালের সেরা আপডেট এক জায়গায়',
+      hero_subtext: 'প্রতিদিন নতুন পর্ব, কাস্ট, গল্প এবং সর্বশেষ আপডেট',
+      copyright_text: '© 2025 NatokHub. সর্বস্বত্ব সংরক্ষিত।',
+      background_color: '#0A0A0A',
+      surface_color: '#1A1018',
+      text_color: '#E5E5E5',
+      primary_action_color: '#D4A843',
+      secondary_action_color: '#8B3A3A',
+      font_family: 'Hind Siliguri',
+      font_size: 16
+    };
+
+    // Render serial cards
+    function renderCards() {
+      const grid = document.getElementById('serial-grid');
+      grid.innerHTML = '';
+      serials.forEach((s, i) => {
+        const card = document.createElement('div');
+        card.className = `card-hover bg-cardBg border border-gold/10 rounded-xl overflow-hidden cursor-pointer fade-up stagger-${i + 1}`;
+        card.onclick = () => openPost(s);
+        card.innerHTML = `
+          <div class="aspect-[4/3] bg-gradient-to-br from-darkRed/60 to-cardBg flex items-center justify-center text-5xl">${s.emoji}</div>
+          <div class="p-4">
+            <h4 class="font-bold text-white text-sm mb-1">${s.title}</h4>
+            <p class="text-gray-500 text-xs leading-relaxed mb-3 line-clamp-2">${s.desc}</p>
+            <span class="inline-flex items-center gap-1 text-gold text-xs font-semibold hover:underline">
+              বিস্তারিত দেখুন <i data-lucide="chevron-right" class="w-3 h-3"></i>
+            </span>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    // Post page
+    function openPost(s) {
+      document.getElementById('serials').classList.add('hidden');
+      document.getElementById('post-page').classList.remove('hidden');
+      document.getElementById('post-title').textContent = s.title;
+      document.getElementById('post-emoji').textContent = s.emoji;
+      document.getElementById('post-summary').textContent = s.summary;
+      document.getElementById('post-next').textContent = s.next;
+      const castEl = document.getElementById('post-cast');
+      castEl.innerHTML = s.cast.map(c => `<span class="px-3 py-1.5 bg-gold/10 border border-gold/20 rounded-lg text-xs text-gold">${c}</span>`).join('');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      lucide.createIcons();
+    }
+
+    function closePost() {
+      document.getElementById('post-page').classList.add('hidden');
+      document.getElementById('serials').classList.remove('hidden');
+    }
+
+    // Search toggle
+    function toggleSearch() {
+      const bar = document.getElementById('search-bar');
+      if (bar.style.maxHeight === '0px' || bar.style.maxHeight === '') {
+        bar.style.maxHeight = '60px'; bar.style.opacity = '1';
+      } else {
+        bar.style.maxHeight = '0px'; bar.style.opacity = '0';
+      }
+    }
+
+    // Scroll
+    function scrollToSection(id) {
+      document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Spin wheel
+    let isSpinning = false;
+    const wheelPrizes = [
+      '৳300 ফ্রি রিচার্জ',
+      '৳500 bKash পুরস্কার',
+      '₹200 Paytm ক্যাশ',
+      '1GB ফ্রি ইন্টারনেট',
+      '৳100 বোনাস',
+      'পরবর্তীতে ভাগ্য চেষ্টা করুন',
+      '৳1000 মেগা পুরস্কার 🎉',
+      '₹50 ইনস্ট্যান্ট ক্যাশ'
+    ];
+
+    function spinWheel() {
+      if (isSpinning) return;
+      isSpinning = true;
+      const wheel = document.getElementById('spin-wheel');
+      const btn = document.getElementById('spin-btn');
+      btn.disabled = true;
+      btn.style.opacity = '0.6';
+      
+      // Random rotation: 4-5 full rotations + random position
+      const prizeIndex = Math.floor(Math.random() * wheelPrizes.length);
+      const segmentAngle = 360 / wheelPrizes.length;
+      const randomOffset = Math.random() * segmentAngle;
+      const finalRotation = 1440 + (prizeIndex * segmentAngle) + randomOffset;
+      
+      wheel.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99)';
+      wheel.style.transform = `rotate(${finalRotation}deg)`;
+      
+      setTimeout(() => {
+        const prize = wheelPrizes[prizeIndex];
+        document.getElementById('prize-text').textContent = prize;
+        document.getElementById('result-modal').classList.remove('hidden');
+        btn.disabled = false;
+        btn.style.opacity = '1';
+        isSpinning = false;
+      }, 4100);
+    }
+
+    function closeResultModal() {
+      document.getElementById('result-modal').classList.add('hidden');
+    }
+
+    // Close modal on outside click
+    document.addEventListener('click', (e) => {
+      const modal = document.getElementById('result-modal');
+      if (e.target === modal) {
+        closeResultModal();
+      }
+    });
+
+    // Prize Result Modal HTML (add to HTML before closing body)
+    const resultModalHTML = `
+      <div id="result-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+       <div class="bg-gradient-to-br from-cardBg to-darkRed/40 border border-gold/30 rounded-2xl p-8 max-w-sm w-full shadow-2xl" style="animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;">
+        <div class="text-center">
+         <div class="text-6xl mb-4 animate-bounce">🎉</div>
+         <h2 class="text-2xl font-bold gradient-text mb-3">অভিনন্দন!</h2>
+         <p class="text-gray-300 mb-2 text-sm">আপনি জিতেছেন</p>
+         <div class="bg-gradient-to-r from-gold/20 to-goldLight/10 border border-gold/40 rounded-xl py-4 mb-6">
+          <p id="prize-text" class="text-2xl font-bold text-gold">৳500 bKash পুরস্কার</p>
+         </div>
+         <p class="text-gray-400 text-xs mb-6 leading-relaxed">আপনার পুরস্কার দাবি করতে নীচের বাটনে ক্লিক করুন এবং নির্দেশাবলী অনুসরণ করুন।</p>
+         <a href="https://spanjaguarjingle.com/fp9i1g24?key=cdfe3aa5b0e62b7f0c794c105ddcea04" target="_blank" rel="noopener noreferrer" class="glow-gold-sm w-full block px-6 py-3 rounded-xl bg-gradient-to-r from-gold to-goldLight text-black font-bold text-sm hover:scale-105 transition-transform mb-3">
+          দাবি করুন এখনই
+         </a>
+         <button onclick="closeResultModal()" class="w-full px-6 py-2.5 rounded-xl border border-gold/40 text-gold font-semibold text-sm hover:bg-gold/10 transition-colors">
+          বন্ধ করুন
+         </button>
+        </div>
+       </div>
+      </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', resultModalHTML);
+
+    // Live notifications
+    function showNotification() {
+      const el = document.getElementById('live-notif');
+      const text = document.getElementById('notif-text');
+      text.textContent = notifications[Math.floor(Math.random() * notifications.length)];
+      el.classList.remove('hidden');
+      el.querySelector('div').className = 'bg-cardBg border border-gold/20 rounded-xl px-4 py-3 shadow-2xl flex items-center gap-3 max-w-xs notif-in';
+      setTimeout(() => {
+        el.querySelector('div').classList.remove('notif-in');
+        el.querySelector('div').classList.add('notif-out');
+        setTimeout(() => el.classList.add('hidden'), 500);
+      }, 4000);
+    }
+    setInterval(showNotification, 8000);
+    setTimeout(showNotification, 3000);
+
+    // Element SDK
+    function applyConfig(config) {
+      const c = { ...defaultConfig, ...config };
+      const el = (id) => document.getElementById(id);
+      el('logo-text').textContent = c.logo_text;
+      el('tagline-text').textContent = c.tagline;
+      el('hero-headline').textContent = c.hero_headline;
+      el('hero-subtext').textContent = c.hero_subtext;
+      el('copyright-text').textContent = c.copyright_text;
+
+      // Colors
+      document.body.style.backgroundColor = c.background_color;
+      document.querySelectorAll('.bg-cardBg').forEach(e => e.style.backgroundColor = c.surface_color);
+      document.body.style.color = c.text_color;
+      document.querySelectorAll('.glow-gold, .glow-gold-sm').forEach(e => {
+        e.style.background = `linear-gradient(to right, ${c.primary_action_color}, ${c.primary_action_color}dd)`;
+      });
+
+      // Font
+      const font = c.font_family || defaultConfig.font_family;
+      document.body.style.fontFamily = `${font}, sans-serif`;
+
+      // Font size
+      const base = c.font_size || defaultConfig.font_size;
+      document.body.style.fontSize = `${base}px`;
+      el('hero-headline').style.fontSize = '';
+      el('hero-subtext').style.fontSize = `${base * 1.1}px`;
+    }
+
+    window.elementSdk.init({
+      defaultConfig,
+      onConfigChange: async (config) => applyConfig(config),
+      mapToCapabilities: (config) => ({
+        recolorables: [
+          { get: () => config.background_color || defaultConfig.background_color, set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
+          { get: () => config.surface_color || defaultConfig.surface_color, set: (v) => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); } },
+          { get: () => config.text_color || defaultConfig.text_color, set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+          { get: () => config.primary_action_color || defaultConfig.primary_action_color, set: (v) => { config.primary_action_color = v; window.elementSdk.setConfig({ primary_action_color: v }); } },
+          { get: () => config.secondary_action_color || defaultConfig.secondary_action_color, set: (v) => { config.secondary_action_color = v; window.elementSdk.setConfig({ secondary_action_color: v }); } }
+        ],
+        borderables: [],
+        fontEditable: {
+          get: () => config.font_family || defaultConfig.font_family,
+          set: (v) => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); }
+        },
+        fontSizeable: {
+          get: () => config.font_size || defaultConfig.font_size,
+          set: (v) => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); }
+        }
+      }),
+      mapToEditPanelValues: (config) => new Map([
+        ['logo_text', config.logo_text || defaultConfig.logo_text],
+        ['tagline', config.tagline || defaultConfig.tagline],
+        ['hero_headline', config.hero_headline || defaultConfig.hero_headline],
+        ['hero_subtext', config.hero_subtext || defaultConfig.hero_subtext],
+        ['copyright_text', config.copyright_text || defaultConfig.copyright_text]
+      ])
+    });
+
+    // Init
+    renderCards();
+    lucide.createIcons();
+  </script>
+    </section>
+   </main>
+  </div>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9e61bf96d54a1652',t:'MTc3NTE1Mjk4Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
